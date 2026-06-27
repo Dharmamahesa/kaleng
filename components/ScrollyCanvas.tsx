@@ -10,7 +10,7 @@ export default function ScrollyCanvas() {
   const [images, setImages] = useState<HTMLImageElement[]>([])
   const [loadProgress, setLoadProgress] = useState(0)
   
-  const frameCount = 120
+  const frameCount = 150
 
   const drawFrame = useCallback((image: HTMLImageElement) => {
     if (!canvasRef.current || !image) return
@@ -95,7 +95,7 @@ export default function ScrollyCanvas() {
     for (let i = 0; i < frameCount; i++) {
       const img = new Image()
       const paddedIndex = String(i).padStart(3, '0')
-      img.src = `/sequence/frame_${paddedIndex}_delay-0.066s.png`
+      img.src = `/sequence-webp/frame_${paddedIndex}.webp`
       
       img.onload = () => {
         loadedImages[i] = img
