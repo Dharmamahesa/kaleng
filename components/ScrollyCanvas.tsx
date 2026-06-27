@@ -27,65 +27,30 @@ export default function ScrollyCanvas() {
     canvas.style.width = `${w}px`
     canvas.style.height = `${h}px`
 
-    // Clear canvas with dark background
+    // Clear canvas
     ctx.fillStyle = '#0a0a0f'
     ctx.fillRect(0, 0, w, h)
 
-    // Calculate scaled-down can size
-    // Mobile: ~55% of viewport height, Desktop: ~70%
-    const isMobile = w < 768
-    const canScale = isMobile ? 0.55 : 0.70
-    
+    // Full background cover (like object-fit: cover)
     const imgRatio = image.width / image.height
-    const targetH = h * canScale
-    const targetW = targetH * imgRatio
+    const viewRatio = w / h
 
-    // Center the can
-    const x = (w - targetW) / 2
-    const y = (h - targetH) / 2
+    let drawW, drawH, drawX, drawY
+    if (viewRatio > imgRatio) {
+      // Viewport is wider than image — fit by width
+      drawW = w
+      drawH = w / imgRatio
+      drawX = 0
+      drawY = (h - drawH) / 2
+    } else {
+      // Viewport is taller than image — fit by height
+      drawH = h
+      drawW = h * imgRatio
+      drawX = (w - drawW) / 2
+      drawY = 0
+    }
 
-    // Draw radial glow behind the can
-    const glowX = w / 2
-    const glowY = h / 2
-    const glowRadius = Math.max(targetW, targetH) * 0.9
-    const glow = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, glowRadius)
-    glow.addColorStop(0, 'rgba(200, 135, 92, 0.12)')
-    glow.addColorStop(0.5, 'rgba(200, 135, 92, 0.04)')
-    glow.addColorStop(1, 'rgba(200, 135, 92, 0)')
-    ctx.fillStyle = glow
-    ctx.fillRect(0, 0, w, h)
-
-    // Draw the can image scaled down
-    ctx.drawImage(image, x, y, targetW, targetH)
-
-    // Feathered edge mask to blend the image into the dark background
-    // Top edge
-    const topGrad = ctx.createLinearGradient(x, y, x, y + targetH * 0.08)
-    topGrad.addColorStop(0, 'rgba(10, 10, 15, 0.8)')
-    topGrad.addColorStop(1, 'rgba(10, 10, 15, 0)')
-    ctx.fillStyle = topGrad
-    ctx.fillRect(x, y, targetW, targetH * 0.08)
-
-    // Bottom edge
-    const bottomGrad = ctx.createLinearGradient(x, y + targetH * 0.92, x, y + targetH)
-    bottomGrad.addColorStop(0, 'rgba(10, 10, 15, 0)')
-    bottomGrad.addColorStop(1, 'rgba(10, 10, 15, 0.8)')
-    ctx.fillStyle = bottomGrad
-    ctx.fillRect(x, y + targetH * 0.92, targetW, targetH * 0.08)
-
-    // Left edge
-    const leftGrad = ctx.createLinearGradient(x, y, x + targetW * 0.05, y)
-    leftGrad.addColorStop(0, 'rgba(10, 10, 15, 0.8)')
-    leftGrad.addColorStop(1, 'rgba(10, 10, 15, 0)')
-    ctx.fillStyle = leftGrad
-    ctx.fillRect(x, y, targetW * 0.05, targetH)
-
-    // Right edge
-    const rightGrad = ctx.createLinearGradient(x + targetW * 0.95, y, x + targetW, y)
-    rightGrad.addColorStop(0, 'rgba(10, 10, 15, 0)')
-    rightGrad.addColorStop(1, 'rgba(10, 10, 15, 0.8)')
-    ctx.fillStyle = rightGrad
-    ctx.fillRect(x + targetW * 0.95, y, targetW * 0.05, targetH)
+    ctx.drawImage(image, drawX, drawY, drawW, drawH)
   }, [])
 
   useEffect(() => {
@@ -134,7 +99,7 @@ export default function ScrollyCanvas() {
   }, [images, frameIndex, drawFrame])
 
   return (
-    <section id="home" ref={containerRef} className="relative w-full h-[400vh]" style={{ background: '#0a0a0f' }}>
+    <section id="home" ref={containerRef} className="relative w-full h-[700vh]" style={{ background: '#0a0a0f' }}>
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden" style={{ background: '#0a0a0f' }}>
         {/* Loading Screen */}
         {images.length === 0 && (
