@@ -1,24 +1,41 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Geist_Mono } from "next/font/google";
+import { Caveat, Outfit } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const caveat = Caveat({
+  variable: "--font-caveat",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Kopi Jales — Cinnamon Latte | Premium Canned Coffee",
+  title: "bocchi.portfolio — hitori goto · guitar · music · code",
   description:
-    "Experience Kopi Jales Cinnamon Latte — 300ml of smooth cold-brewed Arabica coffee infused with authentic Ceylon cinnamon. Crafted in Indonesia.",
-  keywords: ["kopi jales", "cinnamon latte", "canned coffee", "cold brew", "premium coffee", "indonesia"],
+    "A shy programmer who expresses herself through code and music. Frontend developer, UI designer, and reluctant rockstar. Kessoku Band forever.",
+  keywords: [
+    "bocchi the rock",
+    "frontend developer",
+    "portfolio",
+    "anime",
+    "music",
+    "guitar",
+    "kessoku band",
+    "indie",
+    "ui design",
+  ],
+  openGraph: {
+    title: "bocchi.portfolio",
+    description: "shy dev. loud code. ✦",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -29,9 +46,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-bocchi-dark">{children}</body>
     </html>
   );
 }

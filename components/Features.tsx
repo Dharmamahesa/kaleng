@@ -3,134 +3,192 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-const features = [
+const skills = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18V5l12-2v13" />
+        <circle cx="6" cy="18" r="3" />
+        <circle cx="18" cy="16" r="3" />
       </svg>
     ),
-    title: 'Premium Arabica',
-    description: 'Sourced from the finest single-origin Arabica beans, carefully selected from the highlands of Indonesia.',
+    title: 'frontend dev',
+    description: 'React, Next.js, TypeScript. I build things that feel alive — components that breathe, layouts that flow.',
+    tag: '∼ main skill',
+    accent: '#f4a7b9',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-        <path d="M12 6v6l4 2"/>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
       </svg>
     ),
-    title: 'Cold Brew Process',
-    description: 'Slow-steeped for 18 hours at low temperature, extracting smooth flavors without bitterness.',
+    title: 'ui / ux design',
+    description: 'Figma, design systems, micro-interactions. Every pixel is a decision. I agonize over each one.',
+    tag: '∼ obsession',
+    accent: '#b09ac7',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 8l4 4-4 4"/>
-        <path d="M3 12h18"/>
-        <path d="M7 16l-4-4 4-4"/>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
       </svg>
     ),
-    title: 'Ceylon Cinnamon',
-    description: 'Infused with authentic Ceylon cinnamon for a warm, aromatic spice that complements the rich coffee flavor.',
+    title: 'motion design',
+    description: 'Framer Motion, GSAP, CSS animations. I believe everything should move with intention — shy but expressive.',
+    tag: '∼ specialty',
+    accent: '#c9748a',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <path d="M12 8v8"/>
-        <path d="M8 12h8"/>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
     ),
-    title: '300ml Premium Can',
-    description: 'Perfectly portioned in a sleek 300ml aluminum can. Keep it chilled and enjoy anytime, anywhere.',
+    title: 'open source',
+    description: 'Contributor, maintainer, occasional bug reporter. Giving back feels good even when you\'re shy.',
+    tag: '∼ community',
+    accent: '#8b6f9e',
   },
 ]
 
 const containerVariants = {
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
+  visible: { transition: { staggerChildren: 0.13 } },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 36 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-    },
+    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
   },
 }
 
 export default function Features() {
   return (
-    <section id="features" className="relative py-24 md:py-32 px-5 md:px-8 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-navy via-background to-navy pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-copper/5 rounded-full blur-[120px] pointer-events-none" />
+    <section
+      id="skills"
+      className="relative py-24 md:py-36 px-5 md:px-10 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #120f18 0%, #1a1520 50%, #120f18 100%)' }}
+    >
+      {/* Subtle top + bottom gradient fades */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-bocchi-dark/80 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-bocchi-dark/80 to-transparent pointer-events-none" />
 
-      <div className="relative max-w-6xl mx-auto">
-        {/* Section Header */}
+      {/* Ambient blobs */}
+      <div
+        className="absolute left-1/2 top-1/3 w-[500px] h-[500px] -translate-x-1/2 rounded-full pointer-events-none animate-glow-pulse"
+        style={{ background: 'radial-gradient(circle, rgba(201,116,138,0.04) 0%, transparent 70%)', filter: 'blur(60px)' }}
+      />
+
+      <div className="relative max-w-6xl mx-auto z-10">
+        {/* ── Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16 md:mb-20"
+          className="text-center mb-14 md:mb-20"
         >
-          <span className="inline-block text-copper text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mb-4">
-            What Makes Us Special
+          <span className="washi-tape-purple mb-5 inline-block">
+            what i do~
           </span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-cream tracking-tight mb-5">
-            Crafted to{' '}
-            <span className="bg-gradient-to-r from-copper-light to-copper bg-clip-text text-transparent">
-              Perfection
-            </span>
+          <h2
+            className="text-4xl md:text-6xl lg:text-7xl font-bold mt-4 tracking-tight leading-none"
+            style={{ fontFamily: 'var(--font-caveat)', color: '#fde8ef' }}
+          >
+            skills{' '}
+            <span className="gradient-pink-purple">&amp; stuff</span>
+            <span style={{ color: 'rgba(176,154,199,0.6)' }}>~</span>
           </h2>
-          <p className="text-base md:text-lg text-white/40 max-w-xl mx-auto leading-relaxed">
-            Every can of Kopi Jales Cinnamon Latte is a masterpiece of flavor, 
-            quality, and craftsmanship.
+          <p
+            className="mt-4 text-sm md:text-base max-w-md mx-auto leading-relaxed"
+            style={{ color: 'rgba(245,240,248,0.3)', fontFamily: 'var(--font-outfit)' }}
+          >
+            things i&apos;ve gotten good at while avoiding eye contact
           </p>
         </motion.div>
 
-        {/* Feature Cards */}
+        {/* ── Skill Cards ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
+          viewport={{ once: true, margin: '-60px' }}
           className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6"
         >
-          {features.map((feature, idx) => (
+          {skills.map((skill, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="group relative p-6 md:p-8 rounded-2xl md:rounded-3xl glass-light hover:bg-white/[0.06] transition-all duration-500 cursor-default"
+              className="group relative p-6 md:p-8 rounded-2xl md:rounded-3xl glass-bocchi-light cursor-default transition-all duration-500"
+              style={{ '--skill-accent': skill.accent } as React.CSSProperties}
             >
-              {/* Icon */}
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-copper/20 to-copper-dark/20 border border-copper/10 flex items-center justify-center text-copper-light mb-5 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-copper/10 transition-all duration-500">
-                {feature.icon}
+              {/* Icon container */}
+              <div
+                className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center mb-5 transition-all duration-400 group-hover:scale-110"
+                style={{
+                  background: `${skill.accent}14`,
+                  border: `1px solid ${skill.accent}28`,
+                  color: skill.accent,
+                  boxShadow: `0 0 0 0 ${skill.accent}`,
+                }}
+              >
+                {skill.icon}
               </div>
-              
-              {/* Content */}
-              <h3 className="text-xl md:text-2xl font-bold text-cream mb-3 tracking-tight">
-                {feature.title}
+
+              {/* Tag */}
+              <p
+                className="text-[10px] uppercase tracking-widest mb-1.5"
+                style={{ color: `${skill.accent}70`, fontFamily: 'var(--font-outfit)' }}
+              >
+                {skill.tag}
+              </p>
+
+              {/* Title */}
+              <h3
+                className="text-xl md:text-2xl font-bold mb-3 tracking-tight"
+                style={{ fontFamily: 'var(--font-caveat)', color: '#fde8ef' }}
+              >
+                {skill.title}
               </h3>
-              <p className="text-sm md:text-base text-white/40 leading-relaxed">
-                {feature.description}
+
+              {/* Description */}
+              <p
+                className="text-sm md:text-[0.9rem] leading-relaxed"
+                style={{ color: 'rgba(245,240,248,0.38)', fontFamily: 'var(--font-outfit)' }}
+              >
+                {skill.description}
               </p>
 
               {/* Hover border glow */}
-              <div className="absolute inset-0 rounded-2xl md:rounded-3xl ring-1 ring-inset ring-white/0 group-hover:ring-copper/20 transition-all duration-500 pointer-events-none" />
+              <div
+                className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ boxShadow: `inset 0 0 0 1px ${skill.accent}35, 0 4px 20px ${skill.accent}0a` }}
+              />
             </motion.div>
           ))}
         </motion.div>
+
+        {/* ── Bottom stars ── */}
+        <div className="flex justify-center gap-3 mt-16 opacity-25">
+          {['✦', '✧', '✦', '✧', '✦'].map((s, i) => (
+            <span
+              key={i}
+              className="animate-star-float"
+              style={{
+                color: i % 2 === 0 ? '#f4a7b9' : '#8b6f9e',
+                animationDelay: `${i * 0.4}s`,
+                fontSize: i === 2 ? '1rem' : '0.7rem',
+              }}
+            >
+              {s}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   )

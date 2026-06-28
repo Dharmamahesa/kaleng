@@ -40,6 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# old PNG sequence (use sequence-webp instead)
-/public/sequence/
+# old conversion scripts
 /convert-frames.js

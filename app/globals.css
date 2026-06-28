@@ -1,117 +1,279 @@
 @import "tailwindcss";
 
+/* ============================================
+   BOCCHI THE ROCK — Color Tokens
+   ============================================ */
 :root {
-  --background: #0a0a0f;
-  --foreground: #f5f0eb;
-  --copper: #c8875c;
-  --copper-light: #e8a87c;
-  --copper-dark: #8b5e3c;
-  --navy: #0d1b2a;
-  --navy-light: #1b2d45;
-  --gold: #d4a574;
-  --cream: #f5e6d3;
+  /* Core palette */
+  --bocchi-pink: #f4a7b9;
+  --bocchi-pink-light: #fcd5e0;
+  --bocchi-pink-dark: #d4748a;
+  --bocchi-rose: #c9748a;
+  --bocchi-rose-dark: #9e4f65;
+  --bocchi-purple: #8b6f9e;
+  --bocchi-purple-light: #b09ac7;
+  --bocchi-purple-dark: #5c4a78;
+  --bocchi-lavender: #c9b8e8;
+
+  /* Background */
+  --bocchi-dark: #1a1520;
+  --bocchi-darker: #120f18;
+  --bocchi-mid: #231c2e;
+  --bocchi-surface: #2d2540;
+
+  /* Text */
+  --bocchi-off-white: #f5f0f8;
+  --bocchi-cream: #fde8ef;
+  --bocchi-muted: rgba(245, 240, 248, 0.45);
+
+  /* Legacy aliases for compat */
+  --background: var(--bocchi-dark);
+  --foreground: var(--bocchi-off-white);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-copper: var(--copper);
-  --color-copper-light: var(--copper-light);
-  --color-copper-dark: var(--copper-dark);
-  --color-navy: var(--navy);
-  --color-navy-light: var(--navy-light);
-  --color-gold: var(--gold);
-  --color-cream: var(--cream);
-  --font-sans: var(--font-inter);
+  --color-bocchi-pink: var(--bocchi-pink);
+  --color-bocchi-pink-light: var(--bocchi-pink-light);
+  --color-bocchi-pink-dark: var(--bocchi-pink-dark);
+  --color-bocchi-rose: var(--bocchi-rose);
+  --color-bocchi-rose-dark: var(--bocchi-rose-dark);
+  --color-bocchi-purple: var(--bocchi-purple);
+  --color-bocchi-purple-light: var(--bocchi-purple-light);
+  --color-bocchi-purple-dark: var(--bocchi-purple-dark);
+  --color-bocchi-lavender: var(--bocchi-lavender);
+  --color-bocchi-dark: var(--bocchi-dark);
+  --color-bocchi-darker: var(--bocchi-darker);
+  --color-bocchi-mid: var(--bocchi-mid);
+  --color-bocchi-surface: var(--bocchi-surface);
+  --color-bocchi-cream: var(--bocchi-cream);
+  --font-sans: var(--font-outfit);
+  --font-handwritten: var(--font-caveat);
   --font-mono: var(--font-geist-mono);
 }
 
+/* ============================================
+   BASE
+   ============================================ */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  background: var(--bocchi-dark);
+  color: var(--bocchi-off-white);
+  font-family: var(--font-outfit), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
 
-/* Premium scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--navy);
-}
-
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bocchi-darker); }
 ::-webkit-scrollbar-thumb {
-  background: var(--copper-dark);
-  border-radius: 3px;
+  background: var(--bocchi-rose);
+  border-radius: 999px;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--bocchi-pink); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--copper);
-}
-
-/* Selection styling */
 ::selection {
-  background: var(--copper);
-  color: var(--navy);
+  background: var(--bocchi-pink);
+  color: var(--bocchi-dark);
 }
 
-/* Loading animation */
-@keyframes shimmer {
+/* ============================================
+   GLASSMORPHISM UTILITIES
+   ============================================ */
+.glass-bocchi {
+  background: rgba(44, 32, 60, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 167, 185, 0.15);
+}
+
+.glass-bocchi-light {
+  background: rgba(255, 240, 248, 0.04);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(244, 167, 185, 0.1);
+}
+
+.glass-bocchi-card {
+  background: rgba(36, 26, 52, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(201, 116, 138, 0.18);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(244, 167, 185, 0.08);
+}
+
+.glass-bocchi-card:hover {
+  border-color: rgba(244, 167, 185, 0.35);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(244, 167, 185, 0.08),
+    inset 0 1px 0 rgba(244, 167, 185, 0.12);
+}
+
+/* ============================================
+   TEXT EFFECTS
+   ============================================ */
+.text-glow-pink {
+  text-shadow:
+    0 0 20px rgba(244, 167, 185, 0.6),
+    0 0 40px rgba(244, 167, 185, 0.3),
+    0 0 80px rgba(201, 116, 138, 0.15);
+}
+
+.text-glow-purple {
+  text-shadow:
+    0 0 20px rgba(139, 111, 158, 0.6),
+    0 0 40px rgba(139, 111, 158, 0.3);
+}
+
+.gradient-pink-purple {
+  background: linear-gradient(135deg, var(--bocchi-pink) 0%, var(--bocchi-purple-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   WASHI TAPE
+   ============================================ */
+.washi-tape {
+  position: relative;
+  display: inline-block;
+  padding: 2px 14px;
+  background: rgba(244, 167, 185, 0.25);
+  border-top: 1.5px solid rgba(244, 167, 185, 0.4);
+  border-bottom: 1.5px solid rgba(244, 167, 185, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bocchi-pink-light);
+  transform: rotate(-0.5deg);
+}
+
+.washi-tape-purple {
+  background: rgba(139, 111, 158, 0.2);
+  border-color: rgba(176, 154, 199, 0.35);
+  color: var(--bocchi-lavender);
+  transform: rotate(0.8deg);
+}
+
+/* ============================================
+   GUITAR PICK SHAPE
+   ============================================ */
+.guitar-pick {
+  width: 20px;
+  height: 24px;
+  background: var(--bocchi-pink);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: rotate(15deg);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.guitar-pick-sm {
+  width: 14px;
+  height: 17px;
+}
+
+/* ============================================
+   GRAIN OVERLAY
+   ============================================ */
+.grain-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* ============================================
+   BOKEH PARTICLES (pseudo-decorative)
+   ============================================ */
+.bokeh-bg {
+  position: relative;
+}
+.bokeh-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 300px at 20% 30%, rgba(244, 167, 185, 0.04) 0%, transparent 70%),
+    radial-gradient(circle 400px at 80% 70%, rgba(139, 111, 158, 0.05) 0%, transparent 70%),
+    radial-gradient(circle 200px at 50% 50%, rgba(201, 116, 138, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   KEYFRAMES
+   ============================================ */
+@keyframes star-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+  33% { transform: translateY(-8px) rotate(5deg); opacity: 1; }
+  66% { transform: translateY(-4px) rotate(-3deg); opacity: 0.85; }
+}
+
+@keyframes note-drift {
+  0% { transform: translateY(0) rotate(-5deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-60px) rotate(10deg); opacity: 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; filter: blur(20px); }
+  50% { opacity: 0.85; filter: blur(16px); }
+}
+
+@keyframes cassette-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.8; }
+  50% { transform: translateY(6px); opacity: 0.4; }
+}
+
+@keyframes shimmer-slide {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-@keyframes float {
+@keyframes float-gentle {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-6px); }
 }
 
-@keyframes scroll-hint {
-  0% { transform: translateY(0); opacity: 1; }
-  50% { transform: translateY(8px); opacity: 0.5; }
-  100% { transform: translateY(0); opacity: 1; }
-}
+/* ============================================
+   ANIMATION CLASSES
+   ============================================ */
+.animate-star-float { animation: star-float 4s ease-in-out infinite; }
+.animate-note-drift { animation: note-drift 3s ease-in forwards; }
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.animate-cassette-spin { animation: cassette-spin 2s linear infinite; }
+.animate-scroll-bounce { animation: scroll-bounce 2s ease-in-out infinite; }
+.animate-marquee { animation: marquee 12s linear infinite; }
+.animate-float-gentle { animation: float-gentle 3s ease-in-out infinite; }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, var(--copper-dark) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--bocchi-pink) 50%, transparent 100%);
   background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animate-scroll-hint {
-  animation: scroll-hint 2s ease-in-out infinite;
-}
-
-/* Glass effect utility */
-.glass {
-  background: rgba(13, 27, 42, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(200, 135, 92, 0.15);
-}
-
-.glass-light {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: shimmer-slide 1.8s infinite;
 }
