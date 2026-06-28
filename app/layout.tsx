@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Caveat, Outfit } from "next/font/google";
+import { Caveat, Outfit, Klee_One } from "next/font/google";
+
 import "./globals.css";
 
 const outfit = Outfit({
@@ -14,6 +15,13 @@ const caveat = Caveat({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
+});
+
+const kleeOne = Klee_One({
+  variable: "--font-klee",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "600"],
 });
 
 export const metadata: Metadata = {
@@ -46,9 +54,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${caveat.variable} h-full antialiased`}
+      className={`${outfit.variable} ${caveat.variable} ${kleeOne.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bocchi-dark">{children}</body>
+      <body className="min-h-full flex flex-col bg-bocchi-dark">
+        {children}
+      </body>
     </html>
   );
 }

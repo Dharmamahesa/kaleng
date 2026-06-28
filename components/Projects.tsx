@@ -10,7 +10,7 @@ const projects = [
     category: 'Design System',
     tag: 'frontend',
     description: 'A handcrafted component library inspired by lo-fi aesthetics and indie game interfaces.',
-    accent: '#f4a7b9',
+    accent: '#FF6B9D',
     year: '2024',
   },
   {
@@ -19,7 +19,7 @@ const projects = [
     category: 'Web App',
     tag: 'fullstack',
     description: 'A personal music diary that visualizes your listening habits as an animated soundscape.',
-    accent: '#b09ac7',
+    accent: '#9B59B6',
     year: '2024',
   },
   {
@@ -28,7 +28,7 @@ const projects = [
     category: 'Creative Portfolio',
     tag: 'design',
     description: 'Interactive venue map for underground bands — click a stage, hear the crowd.',
-    accent: '#c9748a',
+    accent: '#E8A4C8',
     year: '2023',
   },
   {
@@ -37,7 +37,7 @@ const projects = [
     category: 'Open Source',
     tag: 'library',
     description: 'A minimal CSS framework with anime-coded utility classes. 2.3k GitHub stars.',
-    accent: '#8b6f9e',
+    accent: '#FFD93D',
     year: '2023',
   },
 ]
@@ -219,11 +219,11 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* Pink hover glow ring */}
+              {/* Spec-exact neon pink hover glow ring */}
               <div
                 className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  boxShadow: `inset 0 0 0 1px ${project.accent}40, 0 0 30px ${project.accent}10`,
+                  boxShadow: `0 0 10px ${project.accent}44, 0 0 30px ${project.accent}22, inset 0 0 0 1px ${project.accent}40`,
                 }}
               />
             </motion.div>

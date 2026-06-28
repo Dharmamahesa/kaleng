@@ -16,7 +16,7 @@ export default function MusicPlayer() {
 
   return (
     <div
-      className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2"
+      className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-2"
       style={{ fontFamily: 'var(--font-outfit)' }}
     >
       {/* ── Expanded cassette player ── */}
@@ -30,17 +30,17 @@ export default function MusicPlayer() {
             className="glass-bocchi rounded-2xl overflow-hidden"
             style={{
               width: '240px',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(244,167,185,0.12)',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,107,157,0.15)',
             }}
           >
             {/* ── Cassette body ── */}
             <div className="p-4">
               {/* Header label */}
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[9px] uppercase tracking-widest" style={{ color: 'rgba(244,167,185,0.4)' }}>
+                <span className="text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,107,157,0.4)' }}>
                   now playing
                 </span>
-                <span className="text-[9px]" style={{ color: 'rgba(244,167,185,0.25)' }}>
+                <span className="text-[9px]" style={{ color: 'rgba(255,107,157,0.25)' }}>
                   {isPlaying ? '▶ live' : '⏸ paused'}
                 </span>
               </div>
@@ -68,8 +68,8 @@ export default function MusicPlayer() {
                     <div
                       className="relative w-9 h-9 rounded-full border-2 flex items-center justify-center"
                       style={{
-                        borderColor: 'rgba(244,167,185,0.25)',
-                        background: 'rgba(244,167,185,0.05)',
+                        borderColor: 'rgba(255,107,157,0.25)',
+                        background: 'rgba(255,107,157,0.05)',
                         animation: isPlaying ? 'cassette-spin 2s linear infinite' : 'none',
                       }}
                     >
@@ -79,7 +79,7 @@ export default function MusicPlayer() {
                           key={deg}
                           className="absolute w-0.5 h-3 rounded-full"
                           style={{
-                            background: 'rgba(244,167,185,0.3)',
+                            background: 'rgba(255,107,157,0.3)',
                             transformOrigin: 'bottom center',
                             transform: `rotate(${deg}deg) translateX(-50%)`,
                             left: '50%',
@@ -90,17 +90,18 @@ export default function MusicPlayer() {
                       {/* Hub */}
                       <div
                         className="w-2.5 h-2.5 rounded-full"
-                        style={{ background: 'rgba(244,167,185,0.4)' }}
+                        style={{ background: 'rgba(255,107,157,0.4)' }}
                       />
                     </div>
                   </div>
 
                   {/* Tape ribbon */}
-                  <div className="flex-1 mx-12 h-1.5 rounded-full" style={{ background: 'rgba(139,111,158,0.3)' }}>
+                  <div className="flex-1 mx-12 h-1.5 rounded-full" style={{ background: 'rgba(155,89,182,0.3)' }}>
                     <div
                       className="h-full rounded-full"
                       style={{
-                        background: 'linear-gradient(90deg, #f4a7b9, #8b6f9e)',
+                        background: 'linear-gradient(90deg, #FF6B9D, #9B59B6)',
+                        boxShadow: '0 0 6px rgba(255,107,157,0.5)',
                         width: isPlaying ? '60%' : '30%',
                         transition: 'width 0.5s ease',
                       }}
@@ -186,10 +187,10 @@ export default function MusicPlayer() {
                   className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
                   style={{
                     background: isPlaying
-                      ? 'linear-gradient(135deg, #c9748a, #8b6f9e)'
-                      : 'rgba(244,167,185,0.15)',
-                    border: '1px solid rgba(244,167,185,0.3)',
-                    boxShadow: isPlaying ? '0 0 16px rgba(201,116,138,0.3)' : 'none',
+                      ? 'linear-gradient(135deg, #FF6B9D, #9B59B6)'
+                      : 'rgba(255,107,157,0.12)',
+                    border: '1px solid rgba(255,107,157,0.35)',
+                    boxShadow: isPlaying ? '0 0 20px rgba(255,107,157,0.4)' : 'none',
                   }}
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
@@ -237,12 +238,12 @@ export default function MusicPlayer() {
         className="relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300"
         style={{
           background: isExpanded
-            ? 'linear-gradient(135deg, #c9748a, #8b6f9e)'
-            : 'rgba(36,26,52,0.85)',
-          border: '1px solid rgba(244,167,185,0.2)',
+            ? 'linear-gradient(135deg, #FF6B9D, #9B59B6)'
+            : 'rgba(26,10,46,0.88)',
+          border: '1px solid rgba(255,107,157,0.22)',
           backdropFilter: 'blur(12px)',
           boxShadow: isExpanded
-            ? '0 4px 24px rgba(201,116,138,0.3)'
+            ? '0 4px 24px rgba(255,107,157,0.35)'
             : '0 4px 20px rgba(0,0,0,0.3)',
         }}
         aria-label="Toggle music player"
