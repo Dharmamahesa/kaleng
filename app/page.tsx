@@ -34,7 +34,7 @@ export default function Home() {
 
       {/* ── Floating UI ── */}
       <MusicPlayer />
-      <Live2DWrapper />
+      {/* <Live2DWrapper /> Temporarily disabled */}
     </main>
   )
 }
