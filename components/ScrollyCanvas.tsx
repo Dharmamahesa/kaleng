@@ -9,7 +9,7 @@ const CHUNK_SIZE   = 30
 const LERP_FACTOR  = 0.12
 
 // px scrolled per rAF tick during auto-scroll (≈60fps → ~90px/s = ~55s full traverse)
-const AUTO_SCROLL_SPEED = 1.5
+const AUTO_SCROLL_SPEED = 2.0
 
 export default function ScrollyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
