@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Caveat, Outfit, Klee_One } from "next/font/google";
 
 import "./globals.css";
+import "./bocchi-cards.css";
+
 
 const outfit = Outfit({
   variable: "--font-outfit",

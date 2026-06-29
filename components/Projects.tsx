@@ -124,23 +124,18 @@ export default function Projects() {
             <motion.div
               key={project.id}
               variants={cardVariants}
-              className="group relative glass-bocchi-card rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-500 cursor-pointer"
+              className="group bocchi-card p-5 md:p-7"
             >
               {/* Top row: tag + year + pick accent */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-2">
                   {/* Category badge */}
                   <span
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider"
-                    style={{
-                      background: `${project.accent}18`,
-                      border: `1px solid ${project.accent}35`,
-                      color: project.accent,
-                      fontFamily: 'var(--font-outfit)',
-                    }}
+                    className="bocchi-tag"
+                    style={{ fontFamily: 'var(--font-outfit)' }}
                   >
                     {/* Cassette tape dot */}
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: project.accent }} />
+                    <span className="bocchi-tag-dot" />
                     {project.tag}
                   </span>
                 </div>
@@ -219,13 +214,7 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* Spec-exact neon pink hover glow ring */}
-              <div
-                className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                  boxShadow: `0 0 10px ${project.accent}44, 0 0 30px ${project.accent}22, inset 0 0 0 1px ${project.accent}40`,
-                }}
-              />
+              {/* Glow ring handled by .bocchi-card:hover in bocchi-cards.css */}
             </motion.div>
           ))}
         </motion.div>

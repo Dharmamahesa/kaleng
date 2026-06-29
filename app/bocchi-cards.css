@@ -1,0 +1,139 @@
+/* ============================================================
+   BOCCHI CARDS — Enhanced Project Card Styles
+   Imported in layout.tsx alongside globals.css
+   ============================================================ */
+
+/* ── Keyframes ────────────────────────────────────────────── */
+
+@keyframes borderShift {
+  0%   { background-position: 0% 50%, 0% 50%; }
+  50%  { background-position: 0% 50%, 100% 50%; }
+  100% { background-position: 0% 50%, 0% 50%; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%       { transform: rotate(-12deg) scale(1.1); }
+  75%       { transform: rotate(12deg) scale(1.1); }
+}
+
+/* ── Main card ────────────────────────────────────────────── */
+
+.bocchi-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  cursor: pointer;
+
+  /* Glassmorphism upgrade */
+  background:
+    linear-gradient(rgba(26, 10, 46, 0.6), rgba(26, 10, 46, 0.6)) padding-box,
+    linear-gradient(135deg, #FF6B9D, #9B59B6, #FF6B9D) border-box;
+  background-size: 100% 100%, 200% 200%;
+  border: 1px solid transparent;
+
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 4px 24px rgba(0, 0, 0, 0.3);
+
+  /* Animated gradient border */
+  animation: borderShift 4s ease infinite;
+
+  /* Hover lift transition */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Hover lift + outer glow ──────────────────────────────── */
+
+.bocchi-card:hover {
+  transform: translateY(-8px) rotate(-0.5deg);
+  box-shadow:
+    0 0 20px #FF6B9D44,
+    0 0 60px #FF6B9D22,
+    0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Scanline retro overlay (::before) ───────────────────── */
+
+.bocchi-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 107, 157, 0.03) 2px,
+    rgba(255, 107, 157, 0.03) 4px
+  );
+}
+
+/* ── Corner guitar pick emoji (::after) ──────────────────── */
+
+.bocchi-card::after {
+  content: '🎸';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+  /* no animation on idle — only triggers on hover */
+}
+
+.bocchi-card:hover::after {
+  opacity: 0.8;
+  animation: wiggle 0.45s ease;
+}
+
+/* ── Ensure all card children sit above pseudo-elements ───── */
+
+.bocchi-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Badge / tag glow ─────────────────────────────────────── */
+
+.bocchi-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  background: rgba(255, 107, 157, 0.15);
+  border: 1px solid rgba(255, 107, 157, 0.4);
+  color: #FF6B9D;
+  box-shadow: 0 0 8px rgba(255, 107, 157, 0.3);
+
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.bocchi-card:hover .bocchi-tag {
+  background: rgba(255, 107, 157, 0.22);
+  box-shadow: 0 0 14px rgba(255, 107, 157, 0.45);
+}
+
+/* Cassette dot inside tag inherits card accent via inline style —
+   keep it white on hover for contrast */
+.bocchi-tag .bocchi-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #FF6B9D;
+}
