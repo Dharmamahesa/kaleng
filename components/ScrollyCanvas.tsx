@@ -7,155 +7,220 @@ import Overlay from './Overlay'
 const TOTAL_FRAMES = 293
 const CHUNK_SIZE = 30
 
+// How quickly the displayed frame catches up to the scroll target.
+// Lower = smoother/laggier. Higher = snappier. 0.12 feels cinematic.
+const LERP_FACTOR = 0.12
+
 export default function ScrollyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imagesRef = useRef<(HTMLImageElement | null)[]>(Array(TOTAL_FRAMES).fill(null))
+  const canvasRef    = useRef<HTMLCanvasElement>(null)
+
+  // Stores loaded image elements
+  const imagesRef       = useRef<(HTMLImageElement | null)[]>(Array(TOTAL_FRAMES).fill(null))
   const loadedChunksRef = useRef<Set<number>>(new Set())
-  const rafRef = useRef<number | null>(null)
-  const currentFrameRef = useRef<number>(0)
-  const isDirtyRef = useRef<boolean>(false)
+  const rafRef          = useRef<number | null>(null)
+
+  // Scroll target (raw, fractional) — updated on every scroll event
+  const targetFrameRef  = useRef<number>(0)
+  // Smoothed display value — lerps toward targetFrameRef each rAF tick
+  const displayFrameRef = useRef<number>(0)
+
+  // Canvas size cache to avoid unnecessary resize ops
+  const canvasSizeRef = useRef({ w: 0, h: 0, dpr: 1 })
 
   const [firstChunkReady, setFirstChunkReady] = useState(false)
-  const [loadProgress, setLoadProgress] = useState(0)
+  const [loadProgress, setLoadProgress]       = useState(0)
 
-  // ── Helpers ────────────────────────────────────────────
-  const getFramePath = (i: number) => {
-    const p = String(i).padStart(3, '0')
-    return `/sequence/frame_${p}.webp`
-  }
+  /* ─────────────────────────────────────────────────────────
+     Frame path helper
+  ───────────────────────────────────────────────────────── */
+  const getFramePath = (i: number) =>
+    `/sequence/frame_${String(i).padStart(3, '0')}.webp`
 
-  // ── Draw a single frame to canvas (cover-fit) ──────────
-  const drawFrame = useCallback((image: HTMLImageElement) => {
+  /* ─────────────────────────────────────────────────────────
+     Resize canvas once if dimensions changed
+  ───────────────────────────────────────────────────────── */
+  const syncCanvasSize = useCallback(() => {
     const canvas = canvasRef.current
-    if (!canvas || !image?.complete) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
+    if (!canvas) return
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    const w = window.innerWidth
-    const h = window.innerHeight
+    const w   = window.innerWidth
+    const h   = window.innerHeight
+    const sz  = canvasSizeRef.current
 
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      ctx.scale(dpr, dpr)
-      canvas.style.width = `${w}px`
-      canvas.style.height = `${h}px`
-    }
+    if (sz.w === w && sz.h === h && sz.dpr === dpr) return // no-op
 
-    // object-fit: cover
-    const iR = image.naturalWidth / image.naturalHeight
-    const vR = w / h
-    let dW: number, dH: number, dX: number, dY: number
-
-    if (vR > iR) {
-      dW = w; dH = w / iR; dX = 0; dY = (h - dH) / 2
-    } else {
-      dH = h; dW = h * iR; dX = (w - dW) / 2; dY = 0
-    }
-
-    ctx.fillStyle = '#1a1520'
-    ctx.fillRect(0, 0, w, h)
-    ctx.drawImage(image, dX, dY, dW, dH)
+    canvas.width  = w * dpr
+    canvas.height = h * dpr
+    canvas.style.width  = `${w}px`
+    canvas.style.height = `${h}px`
+    const ctx = canvas.getContext('2d')
+    if (ctx) ctx.scale(dpr, dpr)
+    canvasSizeRef.current = { w, h, dpr }
   }, [])
 
-  // ── rAF render loop — only re-draws when dirty ─────────
+  /* ─────────────────────────────────────────────────────────
+     Draw two frames blended by `alpha` (0 = frameA only,
+     1 = frameB only). This gives smooth sub-frame transitions.
+  ───────────────────────────────────────────────────────── */
+  const drawBlended = useCallback(
+    (imgA: HTMLImageElement, imgB: HTMLImageElement | null, alpha: number) => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      syncCanvasSize()
+
+      const { w, h } = canvasSizeRef.current
+
+      // Compute cover-fit rect (same for all frames — same source dimensions)
+      const iR = imgA.naturalWidth / imgA.naturalHeight
+      const vR = w / h
+      let dW: number, dH: number, dX: number, dY: number
+      if (vR > iR) {
+        dW = w;  dH = w / iR; dX = 0;           dY = (h - dH) / 2
+      } else {
+        dH = h;  dW = h * iR; dX = (w - dW) / 2; dY = 0
+      }
+
+      // Background
+      ctx.fillStyle = '#1a1520'
+      ctx.fillRect(0, 0, w, h)
+
+      // Frame A — full opacity
+      ctx.globalAlpha = 1
+      ctx.drawImage(imgA, dX, dY, dW, dH)
+
+      // Frame B — blended on top only if we have it and alpha > threshold
+      if (imgB?.complete && alpha > 0.01) {
+        ctx.globalAlpha = alpha
+        ctx.drawImage(imgB, dX, dY, dW, dH)
+        ctx.globalAlpha = 1
+      }
+    },
+    [syncCanvasSize]
+  )
+
+  /* ─────────────────────────────────────────────────────────
+     rAF loop — lerp displayFrame → targetFrame every tick,
+     draw only when display value actually moved.
+  ───────────────────────────────────────────────────────── */
   const renderLoop = useCallback(() => {
     rafRef.current = requestAnimationFrame(renderLoop)
-    if (!isDirtyRef.current) return
-    isDirtyRef.current = false
 
-    const idx = currentFrameRef.current
-    const img = imagesRef.current[idx]
-    if (img?.complete) drawFrame(img)
-  }, [drawFrame])
+    const target  = targetFrameRef.current
+    const current = displayFrameRef.current
+    const delta   = target - current
 
-  // ── Load a chunk of frames ─────────────────────────────
+    // Stop updating if close enough (< 0.02 of a frame)
+    if (Math.abs(delta) < 0.02) {
+      if (Math.abs(delta) > 0) {
+        // Snap to exact target on final tick
+        displayFrameRef.current = target
+        const idx  = Math.round(target)
+        const imgA = imagesRef.current[idx]
+        if (imgA?.complete) drawBlended(imgA, null, 0)
+      }
+      return
+    }
+
+    // Lerp
+    const next = current + delta * LERP_FACTOR
+    displayFrameRef.current = next
+
+    // Integer part → frameA, fractional part → blend alpha toward frameB
+    const floorIdx = Math.floor(next)
+    const ceilIdx  = Math.min(floorIdx + 1, TOTAL_FRAMES - 1)
+    const alpha    = next - floorIdx          // 0 … 1 blending weight
+
+    const imgA = imagesRef.current[Math.max(0, floorIdx)]
+    const imgB = imagesRef.current[ceilIdx]
+
+    if (imgA?.complete) drawBlended(imgA, imgB ?? null, alpha)
+  }, [drawBlended])
+
+  /* ─────────────────────────────────────────────────────────
+     Load a chunk of frames progressively
+  ───────────────────────────────────────────────────────── */
   const loadChunk = useCallback((chunkIndex: number) => {
     if (loadedChunksRef.current.has(chunkIndex)) return
     loadedChunksRef.current.add(chunkIndex)
 
     const start = chunkIndex * CHUNK_SIZE
-    const end = Math.min(start + CHUNK_SIZE, TOTAL_FRAMES)
-    let loadedInChunk = 0
-    const chunkSize = end - start
+    const end   = Math.min(start + CHUNK_SIZE, TOTAL_FRAMES)
 
     for (let i = start; i < end; i++) {
-      if (imagesRef.current[i]) { loadedInChunk++; continue }
+      if (imagesRef.current[i]) continue
 
-      const img = new Image()
-      img.src = getFramePath(i)
+      const img      = new Image()
+      img.src        = getFramePath(i)
       const frameIdx = i
 
       img.onload = () => {
         imagesRef.current[frameIdx] = img
-        loadedInChunk++
 
-        // Update global progress
+        // Progress tracking
         const totalLoaded = imagesRef.current.filter(Boolean).length
         setLoadProgress(Math.round((totalLoaded / TOTAL_FRAMES) * 100))
 
-        // First chunk: trigger ready state & draw frame 0
+        // Unlock canvas after first chunk is ready
         if (chunkIndex === 0 && !loadedChunksRef.current.has(-1)) {
           if (totalLoaded >= CHUNK_SIZE) {
             loadedChunksRef.current.add(-1) // sentinel
             setFirstChunkReady(true)
-            currentFrameRef.current = 0
-            isDirtyRef.current = true
           }
-        }
-
-        // Draw immediately if this is current frame
-        if (frameIdx === currentFrameRef.current) {
-          isDirtyRef.current = true
         }
       }
     }
-
-    void chunkSize // suppress lint
   }, [])
 
-  // ── Initial load: first chunk ──────────────────────────
+  /* ─────────────────────────────────────────────────────────
+     Bootstrap
+  ───────────────────────────────────────────────────────── */
   useEffect(() => {
+    syncCanvasSize()
     loadChunk(0)
     rafRef.current = requestAnimationFrame(renderLoop)
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [loadChunk, renderLoop])
+  }, [loadChunk, renderLoop, syncCanvasSize])
 
-  // ── Resize handler ─────────────────────────────────────
+  // Resize → re-sync canvas dimensions on next rAF tick
   useEffect(() => {
-    const onResize = () => { isDirtyRef.current = true }
+    const onResize = () => {
+      canvasSizeRef.current = { w: 0, h: 0, dpr: 1 } // invalidate cache
+    }
     window.addEventListener('resize', onResize, { passive: true })
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // ── Scroll → frame mapping ─────────────────────────────
+  /* ─────────────────────────────────────────────────────────
+     Scroll → target frame (fractional, not rounded)
+  ───────────────────────────────────────────────────────── */
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   })
 
+  // Keep fractional precision — do NOT round here
   const frameIndex = useTransform(scrollYProgress, [0, 1], [0, TOTAL_FRAMES - 1])
 
   useMotionValueEvent(frameIndex, 'change', (latest) => {
-    const idx = Math.round(Math.max(0, Math.min(TOTAL_FRAMES - 1, latest)))
-    currentFrameRef.current = idx
-    isDirtyRef.current = true
+    const clamped = Math.max(0, Math.min(TOTAL_FRAMES - 1, latest))
+    targetFrameRef.current = clamped
 
-    // Progressive chunk loading: preload 2 chunks ahead
-    const currentChunk = Math.floor(idx / CHUNK_SIZE)
-    loadChunk(currentChunk)
-    if (currentChunk + 1 < Math.ceil(TOTAL_FRAMES / CHUNK_SIZE)) {
-      loadChunk(currentChunk + 1)
-    }
-    if (currentChunk + 2 < Math.ceil(TOTAL_FRAMES / CHUNK_SIZE)) {
-      loadChunk(currentChunk + 2)
-    }
+    // Preload 2 chunks ahead of the target
+    const targetChunk = Math.floor(clamped / CHUNK_SIZE)
+    loadChunk(targetChunk)
+    if (targetChunk + 1 < Math.ceil(TOTAL_FRAMES / CHUNK_SIZE)) loadChunk(targetChunk + 1)
+    if (targetChunk + 2 < Math.ceil(TOTAL_FRAMES / CHUNK_SIZE)) loadChunk(targetChunk + 2)
   })
 
+  /* ─────────────────────────────────────────────────────────
+     Render
+  ───────────────────────────────────────────────────────── */
   return (
     <section
       id="home"
@@ -170,7 +235,6 @@ export default function ScrollyCanvas() {
         {/* ── Loading Screen ── */}
         {!firstChunkReady && (
           <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-6">
-            {/* Bokeh glow */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -178,7 +242,6 @@ export default function ScrollyCanvas() {
                   'radial-gradient(circle 400px at 50% 50%, rgba(244,167,185,0.06) 0%, transparent 70%)',
               }}
             />
-            {/* Guitar pick spinner */}
             <div className="relative w-14 h-14 flex items-center justify-center">
               <div
                 className="w-10 h-12 animate-float-gentle"
@@ -189,15 +252,13 @@ export default function ScrollyCanvas() {
                 }}
               />
             </div>
-            {/* Progress bar */}
             <div className="flex flex-col items-center gap-2">
               <div className="w-44 h-1 bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all duration-300 animate-shimmer"
+                  className="h-full rounded-full transition-all duration-300"
                   style={{
                     width: `${loadProgress}%`,
-                    background: 'linear-gradient(90deg, #c9748a, #f4a7b9, #c9748a)',
-                    backgroundSize: '200% 100%',
+                    background: 'linear-gradient(90deg, #c9748a, #f4a7b9)',
                   }}
                 />
               </div>
@@ -208,8 +269,11 @@ export default function ScrollyCanvas() {
                 loading... {loadProgress}%
               </p>
               <p
-                className="text-[10px]"
-                style={{ color: 'rgba(244,167,185,0.2)', fontFamily: 'var(--font-caveat)', fontSize: '1rem' }}
+                style={{
+                  color: 'rgba(244,167,185,0.2)',
+                  fontFamily: 'var(--font-caveat)',
+                  fontSize: '1rem',
+                }}
               >
                 ♪ tuning up~
               </p>
