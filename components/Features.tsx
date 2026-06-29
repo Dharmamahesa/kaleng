@@ -15,7 +15,7 @@ const skills = [
     title: 'frontend dev',
     description: 'React, Next.js, TypeScript. I build things that feel alive — components that breathe, layouts that flow.',
     tag: '∼ main skill',
-    accent: '#f4a7b9',
+    accent: '#FF6B9D',  // pink — main skill
   },
   {
     icon: (
@@ -27,7 +27,7 @@ const skills = [
     title: 'ui / ux design',
     description: 'Figma, design systems, micro-interactions. Every pixel is a decision. I agonize over each one.',
     tag: '∼ obsession',
-    accent: '#b09ac7',
+    accent: '#FFD93D',  // gold — obsession
   },
   {
     icon: (
@@ -38,7 +38,7 @@ const skills = [
     title: 'motion design',
     description: 'Framer Motion, GSAP, CSS animations. I believe everything should move with intention — shy but expressive.',
     tag: '∼ specialty',
-    accent: '#c9748a',
+    accent: '#9B59B6',  // purple — specialty
   },
   {
     icon: (
@@ -49,7 +49,7 @@ const skills = [
     title: 'open source',
     description: 'Contributor, maintainer, occasional bug reporter. Giving back feels good even when you\'re shy.',
     tag: '∼ community',
-    accent: '#8b6f9e',
+    accent: '#00CEC9',  // cyan — community
   },
 ]
 
@@ -124,35 +124,21 @@ export default function Features() {
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="group relative p-6 md:p-8 rounded-2xl md:rounded-3xl glass-bocchi-light cursor-default transition-all duration-500"
-              style={{ '--skill-accent': skill.accent } as React.CSSProperties}
+              className="group bocchi-skill-card"
+              style={{ '--card-color': skill.accent } as React.CSSProperties}
             >
               {/* Icon container */}
-              <div
-                className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center mb-5 transition-all duration-400 group-hover:scale-110"
-                style={{
-                  background: `${skill.accent}14`,
-                  border: `1px solid ${skill.accent}28`,
-                  color: skill.accent,
-                  boxShadow: `0 0 0 0 ${skill.accent}`,
-                }}
-              >
+              <div className="bocchi-skill-icon">
                 {skill.icon}
               </div>
 
               {/* Tag */}
-              <p
-                className="text-[10px] uppercase tracking-widest mb-1.5"
-                style={{ color: `${skill.accent}70`, fontFamily: 'var(--font-outfit)' }}
-              >
+              <p className="bocchi-skill-tag" style={{ fontFamily: 'var(--font-outfit)' }}>
                 {skill.tag}
               </p>
 
               {/* Title */}
-              <h3
-                className="text-xl md:text-2xl font-bold mb-3 tracking-tight"
-                style={{ fontFamily: 'var(--font-caveat)', color: '#fde8ef' }}
-              >
+              <h3 className="bocchi-skill-title" style={{ fontFamily: 'var(--font-caveat)' }}>
                 {skill.title}
               </h3>
 
@@ -163,12 +149,6 @@ export default function Features() {
               >
                 {skill.description}
               </p>
-
-              {/* Hover border glow */}
-              <div
-                className="absolute inset-0 rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ boxShadow: `inset 0 0 0 1px ${skill.accent}35, 0 4px 20px ${skill.accent}0a` }}
-              />
             </motion.div>
           ))}
         </motion.div>

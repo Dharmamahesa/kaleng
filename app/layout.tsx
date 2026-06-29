@@ -3,6 +3,7 @@ import { Caveat, Outfit, Klee_One } from "next/font/google";
 
 import "./globals.css";
 import "./bocchi-cards.css";
+import "./bocchi-skills.css";
 
 
 const outfit = Outfit({
