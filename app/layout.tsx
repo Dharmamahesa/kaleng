@@ -43,8 +43,8 @@ export const metadata: Metadata = {
     "ui design",
   ],
   openGraph: {
-    title: "bocchi.portfolio",
-    description: "shy dev. loud code. ✦",
+    title: "dharma mahesa.portfolio",
+    description: "anime dev. loud code. ✦",
     type: "website",
   },
 };
