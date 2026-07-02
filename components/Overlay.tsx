@@ -119,15 +119,15 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
     }
   }, [mouseX, mouseY])
 
-  const springCfg = { stiffness: 150, damping: 20 }
-  const rotateX     = useSpring(useTransform(mouseY, (v) => v * -15), springCfg)
-  const rotateY     = useSpring(useTransform(mouseX, (v) => v *  15), springCfg)
+  const springCfg = { stiffness: 200, damping: 15 }
+  const rotateX     = useSpring(useTransform(mouseY, (v) => v * -25), springCfg)
+  const rotateY     = useSpring(useTransform(mouseX, (v) => v *  25), springCfg)
 
   // Decreasing depth for child elements
-  const rotateXHalf  = useTransform(rotateX, (v) => v * 0.5)
-  const rotateYHalf  = useTransform(rotateY, (v) => v * 0.5)
-  const rotateXLight = useTransform(rotateX, (v) => v * 0.3)
-  const rotateYLight = useTransform(rotateY, (v) => v * 0.3)
+  const rotateXHalf  = useTransform(rotateX, (v) => v * 0.48)  // 25 × 0.48 ≈ 12°
+  const rotateYHalf  = useTransform(rotateY, (v) => v * 0.48)
+  const rotateXLight = useTransform(rotateX, (v) => v * 0.28)  // 25 × 0.28 ≈  7°
+  const rotateYLight = useTransform(rotateY, (v) => v * 0.28)
   const rotateXMin   = useTransform(rotateX, (v) => v * 0.1)
   const rotateYMin   = useTransform(rotateY, (v) => v * 0.1)
 
@@ -202,12 +202,11 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
               >
                 <span
                   className="glitch"
-                  data-text="bocchi"
+                  data-text="Dharma mahesa"
                   style={{ display: 'inline-block' }}
                 >
-                  bocchi
+                  Dharma mahesa
                 </span>
-                <span style={{ color: 'var(--bocchi-pink)' }}>.</span>
               </motion.h1>
             )}
 
