@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import { motion, MotionValue, useTransform } from 'framer-motion'
+import { motion, MotionValue, useTransform, useMotionValue, useSpring } from 'framer-motion'
 
 interface OverlayProps {
   scrollYProgress: MotionValue<number>
@@ -96,6 +96,64 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
   const rightOpacity = useTransform(scrollYProgress, [0.55, 0.65, 0.86, 0.93], [0, 1, 1, 0])
   const rightX       = useTransform(scrollYProgress, [0.55, 0.65], [50, 0])
 
+  // ── Mouse parallax 3D ───────────────────────────────────
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [isIdle, setIsIdle] = useState(true)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth  - 0.5) * 2
+      const y = (e.clientY / window.innerHeight - 0.5) * 2
+      mouseX.set(x)
+      mouseY.set(y)
+      setIsIdle(false)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => setIsIdle(true), 2000)
+    }
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [mouseX, mouseY])
+
+  const springCfg = { stiffness: 150, damping: 20 }
+  const rotateX     = useSpring(useTransform(mouseY, (v) => v * -15), springCfg)
+  const rotateY     = useSpring(useTransform(mouseX, (v) => v *  15), springCfg)
+
+  // Decreasing depth for child elements
+  const rotateXHalf  = useTransform(rotateX, (v) => v * 0.5)
+  const rotateYHalf  = useTransform(rotateY, (v) => v * 0.5)
+  const rotateXLight = useTransform(rotateX, (v) => v * 0.3)
+  const rotateYLight = useTransform(rotateY, (v) => v * 0.3)
+  const rotateXMin   = useTransform(rotateX, (v) => v * 0.1)
+  const rotateYMin   = useTransform(rotateY, (v) => v * 0.1)
+
+  // Layered text-shadow for depth illusion
+  const depth3dShadow = [
+    '1px 1px 0 #c94f7c',
+    '2px 2px 0 #b8436d',
+    '3px 3px 0 #a7375e',
+    '4px 4px 0 #96294f',
+    '5px 5px 0 #851b40',
+    '6px 6px 10px rgba(0,0,0,0.5)',
+    '0 0 30px rgba(255,107,157,0.6)',
+    '0 0 60px rgba(255,107,157,0.3)',
+  ].join(', ')
+
+  const idleShadow = [
+    '1px 1px 0 #c94f7c',
+    '2px 2px 0 #b8436d',
+    '3px 3px 0 #a7375e',
+    '4px 4px 0 #96294f',
+    '5px 5px 0 #851b40',
+    '6px 6px 10px rgba(0,0,0,0.5)',
+    '0 0 60px rgba(255,107,157,0.9)',
+    '0 0 100px rgba(255,107,157,0.4)',
+  ].join(', ')
+
   return (
     <div className="absolute inset-0 pointer-events-none z-10">
       <div className="w-full h-full relative">
@@ -108,34 +166,40 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
           className="absolute inset-0 flex flex-col items-center justify-between py-16 md:py-20 px-5"
         >
           {/* ── Top cluster ── */}
-          <div className="text-center mt-6 relative">
-            {/* Washi tape badge */}
+          <div className="text-center mt-6 relative" style={{ transformStyle: 'preserve-3d' }}>
+            {/* Washi tape badge — minimal parallax */}
             {mounted && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.7 }}
                 className="mb-4 flex justify-center"
+                style={{ rotateX: rotateXMin, rotateY: rotateYMin, transformPerspective: 800 }}
               >
                 <span className="washi-tape">✦ kessoku band · indie rock ✦</span>
               </motion.div>
             )}
 
-            {/* Main title — with glitch effect */}
+            {/* Main title "bocchi." — full 3D tilt */}
             {mounted && (
               <motion.h1
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-glow-pink leading-none tracking-tight"
+                className="leading-none tracking-tight"
                 style={{
                   fontFamily: 'var(--font-caveat)',
                   fontSize: 'clamp(3.5rem, 10vw, 9rem)',
                   fontWeight: 700,
                   color: 'var(--bocchi-cream)',
+                  rotateX,
+                  rotateY,
+                  transformPerspective: 800,
+                  transformStyle: 'preserve-3d',
+                  textShadow: isIdle ? idleShadow : depth3dShadow,
+                  transition: isIdle ? 'text-shadow 1.5s ease' : 'text-shadow 0.15s ease',
                 }}
               >
-                {/* Glitch name */}
                 <span
                   className="glitch"
                   data-text="bocchi"
@@ -144,17 +208,29 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
                   bocchi
                 </span>
                 <span style={{ color: 'var(--bocchi-pink)' }}>.</span>
-                <br />
-                <span
-                  style={{
-                    fontSize: 'clamp(2rem, 5.5vw, 5rem)',
-                    color: 'rgba(232,164,200,0.85)',
-                    fontWeight: 600,
-                  }}
-                >
-                  portfolio
-                </span>
               </motion.h1>
+            )}
+
+            {/* "portfolio" subtitle — half depth (0.5×) */}
+            {mounted && (
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  fontFamily: 'var(--font-caveat)',
+                  fontSize: 'clamp(2rem, 5.5vw, 5rem)',
+                  color: 'rgba(232,164,200,0.85)',
+                  fontWeight: 600,
+                  lineHeight: 1.1,
+                  marginTop: '-0.15em',
+                  rotateX: rotateXHalf,
+                  rotateY: rotateYHalf,
+                  transformPerspective: 800,
+                }}
+              >
+                portfolio
+              </motion.p>
             )}
 
             {/* Floating decorators */}
@@ -164,8 +240,8 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
           </div>
 
           {/* ── Bottom cluster ── */}
-          <div className="text-center mb-8 md:mb-16 relative">
-            {/* Typewriter tagline */}
+          <div className="text-center mb-8 md:mb-16 relative" style={{ transformStyle: 'preserve-3d' }}>
+            {/* Typewriter tagline — 0.3× depth */}
             {mounted && (
               <motion.p
                 initial={{ opacity: 0, y: 16 }}
@@ -177,6 +253,9 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
                   color: 'rgba(255,107,157,0.75)',
                   letterSpacing: '0.05em',
                   minHeight: '2rem',
+                  rotateX: rotateXLight,
+                  rotateY: rotateYLight,
+                  transformPerspective: 800,
                 }}
               >
                 hitori goto ·{' '}
@@ -191,6 +270,7 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
                 </span>
               </motion.p>
             )}
+            {/* Description — 0.1× depth (almost flat) */}
             {mounted && (
               <motion.p
                 initial={{ opacity: 0 }}
@@ -200,6 +280,9 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
                 style={{
                   color: 'rgba(255,245,248,0.28)',
                   fontFamily: 'var(--font-klee, var(--font-outfit))',
+                  rotateX: rotateXMin,
+                  rotateY: rotateYMin,
+                  transformPerspective: 800,
                 }}
               >
                 shy developer who speaks in semicolons and power chords
